@@ -2,6 +2,12 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 
+#ifdef _WIN32
+#include <Windows.h>
+#else
+#include <unistd.h>
+#endif
+
 int main(void)
 {
     GLFWwindow* window;
@@ -29,6 +35,25 @@ int main(void)
     /* Print current build */
     std::cout << glGetString(GL_VERSION) << std::endl;
 
+    float positions[6] = {
+        -0.5f, -0.5f,
+         0.0f,  0.5f,
+         0.5f, -0.5f
+    };
+
+    /* Id for the buffer, OpenGL works as a state machine*/
+    unsigned int buffer;
+    glGenBuffers(1, &buffer); // Generate buffer and ID
+    glBindBuffer(GL_ARRAY_BUFFER, buffer); // Select the buffer
+    
+
+    /* Buffers can be stream, static or dynamic
+    * Static means the data is modified once, used multiple times
+    * just like the implementation below
+    * Dynamic means the data is used and modified constantly */
+
+    // Put data into the buffer
+    glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(float), positions, GL_STATIC_DRAW); 
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
@@ -38,9 +63,9 @@ int main(void)
 
         /* Begin triangle rendering */
         glBegin(GL_TRIANGLES);
-        glVertex2f(-0.5f, -0.5f);
-        glVertex2f(0.0f, 0.5f);
-        glVertex2f(0.5f, -0.5f);
+        
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+        
         glEnd();
         /* end triangle rendering */
 
